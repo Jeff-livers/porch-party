@@ -94,8 +94,27 @@ It also updates the `srcset` / `sizes` on the poster image (`id="poster-image"`)
 right file. JPEG has no transparency, so the script warns you if the poster has
 transparent areas.
 
-The 50px poster margin is set in two places: `--poster-margin` in `public/styles.css` and
-`POSTER_MARGIN` in `scripts/make-poster.sh`. If you change one, change the other too.
+### Poster margins
+
+The poster keeps at least 50px of space on every side on tablets and computers, and
+20px on phones. "Phone" means a screen at most 480px wide in portrait, or at most 480px
+tall in landscape.
+
+On phones the poster also stays out of the way of the `TAP FOR SOUND` label in the
+top-left corner. It reserves 48px at the top and bottom in portrait, and 176px at the
+left and right in landscape. Phones always have spare room on that axis, so this doesn't
+make the current poster any smaller. A poster with an unusual shape would shrink a
+little rather than end up under the label.
+
+| Setting | Where | Value |
+| --- | --- | --- |
+| Desktop/tablet margin | `--poster-margin` in `public/styles.css` and `POSTER_MARGIN` in `scripts/make-poster.sh` | 50px |
+| Phone margin | `--poster-margin-phone` in `public/styles.css` and `POSTER_MARGIN_PHONE` in `scripts/make-poster.sh` | 20px |
+| Phone cutoff | the two `480px` media queries in `public/styles.css` and `PHONE_BREAKPOINT` in `scripts/make-poster.sh` | 480px |
+| Label clearance | `--osd-clearance-portrait` / `--osd-clearance-landscape` in `public/styles.css` | 48px / 176px |
+
+The margins and the cutoff appear in both files. If you change one, change the other
+and rerun `scripts/make-poster.sh`, so the browser keeps picking the right image size.
 
 If the event details changed, also update the `alt` text and the `description` /
 `og:description` tags in `public/index.html`.

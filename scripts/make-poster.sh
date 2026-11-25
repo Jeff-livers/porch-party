@@ -5,6 +5,8 @@ WIDTHS=(800 1200 1600 2400)
 OG_WIDTH=1200
 QUALITY=82
 POSTER_MARGIN=50
+POSTER_MARGIN_PHONE=20
+PHONE_BREAKPOINT=480
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SRC="$ROOT/assets/poster.png"
@@ -49,7 +51,9 @@ resize_to_jpeg "$og_w" "$OUT/og.jpg"
 echo "public/images/og.jpg  $(du -h "$OUT/og.jpg" | cut -f1)"
 
 ratio="$(awk -v w="$src_w" -v h="$src_h" 'BEGIN { printf "%.4f", w / h }')"
-sizes="min(calc(100vw - $((POSTER_MARGIN * 2))px), calc((100vh - $((POSTER_MARGIN * 2))px) * $ratio))"
+poster_size() { echo "min(calc(100vw - $(($1 * 2))px), calc((100vh - $(($1 * 2))px) * $ratio))"; }
+phone_size="$(poster_size "$POSTER_MARGIN_PHONE")"
+sizes="(max-width: ${PHONE_BREAKPOINT}px) $phone_size, (max-height: ${PHONE_BREAKPOINT}px) $phone_size, $(poster_size "$POSTER_MARGIN")"
 largest="${srcset[${#srcset[@]}-1]%% *}"
 srcset_attr="$(IFS=,; echo "${srcset[*]}" | sed 's/,/, /g')"
 

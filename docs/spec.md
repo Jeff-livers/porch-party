@@ -31,7 +31,7 @@ A full-screen page. Old camcorder footage plays in the background as quick rando
 
 ### 4. Poster
 - Centered horizontally and vertically.
-- As large as possible while keeping a **minimum 50px margin on every side**, at every screen size and orientation.
+- As large as possible while keeping a **minimum 50px margin on every side** on desktop/tablet. **On phones the margin drops to 20px** (owner feedback: the poster was too small on mobile). Both margins are settings.
 - Aspect ratio preserved, never cropped or stretched.
 - "Highlighted": it has to stand out against busy footage (e.g. a shadow or glow). The engineer picks the treatment, and it should be subtle and tasteful.
 - Has descriptive alt text. Suggested: "Porch Party poster: paper-cutout collage. 6:30pm at 907 North Pearl St., Denver. Join us for a porch party on the top floor balcony of our apartment. Snacks provided. BYOB. Plus-ones welcome." Add the date once the owner has it.

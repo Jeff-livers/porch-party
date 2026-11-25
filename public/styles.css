@@ -2,6 +2,9 @@
   color-scheme: dark;
   --bg: #0d0c0b;
   --poster-margin: 50px;
+  --poster-margin-phone: 20px;
+  --osd-clearance-portrait: 48px;
+  --osd-clearance-landscape: 176px;
   --grain-tile: 128px;
   --grain-opacity: 0.3;
   --grain-speed: 0.5s;
@@ -118,6 +121,18 @@ html {
   position: fixed;
   inset: var(--poster-margin);
   z-index: 1;
+}
+
+@media (max-width: 480px) and (orientation: portrait) {
+  .poster {
+    inset: max(var(--poster-margin-phone), var(--osd-clearance-portrait)) var(--poster-margin-phone);
+  }
+}
+
+@media (max-height: 480px) and (orientation: landscape) {
+  .poster {
+    inset: var(--poster-margin-phone) max(var(--poster-margin-phone), var(--osd-clearance-landscape));
+  }
 }
 
 .poster img {
