@@ -1,0 +1,100 @@
+:root {
+  color-scheme: dark;
+  --bg: #0d0c0b;
+  --poster-margin: 50px;
+  --grain-tile: 128px;
+  --grain-opacity: 0.3;
+  --grain-speed: 0.5s;
+  --scanline-opacity: 0.06;
+  --vignette-opacity: 0.3;
+  --vignette-start: 55%;
+  --footage-dim: 0.06;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.footage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.footage.is-live {
+  opacity: 1;
+}
+
+.footage video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.footage video.is-active {
+  z-index: 1;
+}
+
+.grain {
+  position: absolute;
+  inset: calc(var(--grain-tile) * -1);
+  z-index: 2;
+  background-image: var(--grain);
+  background-size: var(--grain-tile);
+  opacity: var(--grain-opacity);
+  animation: grain-jitter var(--grain-speed) steps(1) infinite;
+  will-change: transform;
+  pointer-events: none;
+}
+
+@keyframes grain-jitter {
+  0%     { transform: translate(0, 0); }
+  12.5%  { transform: translate(-37px, 52px); }
+  25%    { transform: translate(61px, -18px); }
+  37.5%  { transform: translate(-90px, -71px); }
+  50%    { transform: translate(23px, 97px); }
+  62.5%  { transform: translate(-58px, 11px); }
+  75%    { transform: translate(84px, 66px); }
+  87.5%  { transform: translate(-12px, -103px); }
+}
+
+.tape {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background:
+    radial-gradient(ellipse at center, transparent var(--vignette-start), rgb(0 0 0 / var(--vignette-opacity)) 100%),
+    repeating-linear-gradient(to bottom, rgb(0 0 0 / var(--scanline-opacity)) 0 1px, transparent 1px 3px),
+    rgb(0 0 0 / var(--footage-dim));
+  pointer-events: none;
+}
+
+.poster {
+  position: fixed;
+  inset: var(--poster-margin);
+  z-index: 1;
+}
+
+.poster img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 0 1px rgb(0 0 0 / 0.5))
+    drop-shadow(0 12px 32px rgb(0 0 0 / 0.65));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grain {
+    animation: none;
+  }
+}
