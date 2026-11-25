@@ -1,12 +1,45 @@
 const MANIFEST_URL = 'clips/clips.json';
+const MUSIC_URL = 'audio/song.m4a';
 const GRAIN_TILE_SIZE = 128;
+const MUSIC_DISPLAY = {
+  idle: { icon: '▶︎', label: 'TAP FOR SOUND' },
+  playing: { icon: '▶︎', label: 'SOUND ON' },
+  paused: { icon: '❚❚', label: 'PAUSED' },
+};
 
 const footage = document.querySelector('.footage');
 const videos = [...footage.querySelectorAll('video')];
+const musicButton = document.querySelector('.osd');
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 drawGrainTile();
 startFootage();
+setUpMusic();
+
+function setUpMusic() {
+  const music = new Audio();
+  music.preload = 'none';
+  music.loop = true;
+
+  const showMusicState = (state) => {
+    const { icon, label } = MUSIC_DISPLAY[state];
+    musicButton.dataset.state = state;
+    musicButton.querySelector('.osd-icon').textContent = icon;
+    musicButton.querySelector('.osd-label').textContent = label;
+  };
+
+  music.addEventListener('playing', () => showMusicState('playing'));
+  music.addEventListener('pause', () => showMusicState('paused'));
+
+  document.addEventListener('click', () => {
+    if (!music.getAttribute('src')) music.src = MUSIC_URL;
+    if (music.paused) {
+      music.play().catch(() => showMusicState(music.currentTime > 0 ? 'paused' : 'idle'));
+    } else {
+      music.pause();
+    }
+  });
+}
 
 async function startFootage() {
   let clips;
@@ -83,7 +116,10 @@ function playShuffledClips(clips) {
       await video.play();
     } catch (error) {
       if (error.name === 'NotAllowedError') {
-        document.addEventListener('pointerdown', () => playAndBringToFront(video), { once: true });
+        document.addEventListener('click', () => {
+          for (const v of videos) if (v !== video) unlockForLaterPlayback(v);
+          playAndBringToFront(video);
+        }, { once: true });
       }
       return false;
     }
@@ -93,6 +129,13 @@ function playShuffledClips(clips) {
     consecutiveFailures = 0;
     return true;
   }
+}
+
+function unlockForLaterPlayback(video) {
+  video.play().then(() => {
+    video.pause();
+    video.currentTime = 0;
+  }).catch(() => {});
 }
 
 function nextFrameShown(video) {

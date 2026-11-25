@@ -42,10 +42,23 @@ A full-screen page. Old camcorder footage plays in the background as quick rando
 - Respects `prefers-reduced-motion` (e.g. slow or stop cuts, calm the grain).
 - Deploys to Cloudflare Workers as static assets. Only site files are published, never `raw/`, scripts, docs, or the full-size poster.
 
+### 6. Music (v1.2)
+- Source: `assets/song.mp3` ("Lapis Lazuli (A1)", 4:52, 9MB, 259kbps stereo, with embedded cover art that must be stripped). Never serve the source file.
+- **Starts at 0:55** on the first tap. The start point is a setting. When the song ends, it loops back to 0:55, not 0:00.
+- One song plays when the visitor **taps/clicks anywhere** on the page. Browsers block sound until the visitor interacts, so it can't start on its own.
+- Tapping again pauses it; the next tap resumes. Loops when it ends.
+- A small, unobtrusive hint invites the tap. Suggested: camcorder on-screen-display style text, e.g. "▶ TAP FOR SOUND", that switches to a playing/paused state. It must not compete with the poster.
+- Audio file is compressed for the web (small download, plays on iPhone Safari). Audio only starts downloading after the first tap or when idle, never blocking the page.
+- Works alongside the iOS Low Power Mode tap-to-start-video behavior: one tap starts both.
+- Under reduced motion, music behavior is unchanged (it's opt-in already).
+
+## Backlog (later, not now)
+- **Sign-up button → form** asking for name and email, styled the same way: a card hanging over the video like the poster. Where submissions go is still to be decided.
+
 ## Acceptance check (owner, by eye)
 - Open on phone and laptop: poster is crisp and centered with ≥50px space all around.
 - Background cycles random ~3s clips with no black flashes.
 - Video clearly looks like old grainy camcorder footage.
 
 ## Out of scope for v1
-Audio, RSVP form, text overlays, animations on the poster.
+RSVP form (see Backlog), animations on the poster.

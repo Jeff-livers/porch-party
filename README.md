@@ -7,8 +7,9 @@ Plain HTML/CSS/JS with no build step, served as static assets on Cloudflare Work
   - `index.html`, `styles.css`, `main.js`: the page
   - `clips/`: web clips plus `clips.json`, the list the page shuffles (generated)
   - `images/`: web-sized poster images and the link-preview image (generated)
-- `scripts/`: the scripts that generate `public/clips/` and `public/images/`
-- `assets/poster.png`: the full-size poster (source only, never deployed)
+  - `audio/`: the web version of the song (generated)
+- `scripts/`: the scripts that generate `public/clips/`, `public/images/` and `public/audio/`
+- `assets/`: the full-size poster and the source song (source only, never deployed)
 - `raw/`: original camcorder clips (not committed, never deployed)
 - `wrangler.jsonc`: Cloudflare Workers config
 
@@ -98,6 +99,39 @@ The 50px poster margin is set in two places: `--poster-margin` in `public/styles
 
 If the event details changed, also update the `alt` text and the `description` /
 `og:description` tags in `public/index.html`.
+
+## Music
+
+The first tap or click anywhere on the page starts the song. The next tap pauses it,
+and the one after that resumes. A small camcorder-style label in the top-left corner
+shows the state: `TAP FOR SOUND`, `SOUND ON` or `PAUSED`. Keyboard users can Tab to it
+and press Enter or Space. The audio isn't downloaded until that first tap.
+
+The web file is made from `assets/song.mp3` by:
+
+```sh
+scripts/make-audio.sh
+```
+
+It writes `public/audio/song.m4a`: AAC at 96 kbps stereo, which plays on iPhone Safari
+and everything else. The cover art and tags are removed. The file is cut to begin at
+the start point, so the browser just loops the whole file and every loop goes back to
+the start point, not 0:00. The source mp3 is never deployed.
+
+Settings at the top of `scripts/make-audio.sh`:
+
+| Setting | Now | What it does |
+| --- | --- | --- |
+| `START_SECONDS` | 55 | Where the song starts and loops back to (0:55) |
+| `FADE_IN_SECONDS` | 0.3 | Short fade at the start point so it doesn't click (0 is off) |
+| `BITRATE` | 96k | Audio quality (128k sounds better and makes a bigger file) |
+
+- **Change the start point:** edit `START_SECONDS` and rerun the script.
+- **Swap the song:** replace `assets/song.mp3` (keep that name) and rerun the script.
+
+Clips and audio go through the small Worker in `worker.js`
+(`run_worker_first` in `wrangler.jsonc`), because Cloudflare's static assets don't
+answer the partial (range) requests Safari needs to play video and audio.
 
 ## Preview locally
 
